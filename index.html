@@ -3,15 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game of Memory</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Game of Memory | JavaScript</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <div class="conatiner">
+
+    <div class="container">
         <h2>Game of Memory</h2>
         <div class="game"></div>
-        <button class="restart">Restart</button>
+        <button class="reset" onclick="window.location.reload();">Restart Game</button>
     </div>
+
+    <script>
+        const emojis = ["😂", "😂", "😍", "😍", "😭", "😭", "🙈", "🙈", "😘", "😘", "😩", "😩", "🥹", "🥹", "😳", "😳"];
+        const shuffledEmojis = emojis.sort(() => Math.random() - 0.5);
+
+        let selectedBoxes = [];
+        let matchedPairs = 0;
+
+        const gameContainer = document.querySelector(".game");
+
+        shuffledEmojis.forEach((emoji) => {
+            const box = document.createElement("div");
+            box.classList.add("item");
+            box.textContent = "";
+            box.dataset.emoji = emoji;
+
+            box.addEventListener("click", function () {
+                if (selectedBoxes.length < 2 && !box.classList.contains("boxOpen") && !box.classList.contains("boxMatch")) {
+                    box.classList.add("boxOpen");
+                    box.textContent = box.dataset.emoji;
+                    selectedBoxes.push(box);
+
+                    if (selectedBoxes.length === 2) {
+                        setTimeout(checkMatch, 500);
+                    }
+                }
+            });
+
+            gameContainer.appendChild(box);
+        });
+
+        function checkMatch() {
+            const [first, second] = selectedBoxes;
+
+            if (first.dataset.emoji === second.dataset.emoji) {
+                first.classList.add("boxMatch");
+                second.classList.add("boxMatch");
+                matchedPairs += 2;
+            } else {
+                first.classList.remove("boxOpen");
+                second.classList.remove("boxOpen");
+                first.textContent = "";
+                second.textContent = "";
+            }
+
+            selectedBoxes = [];
+
+            if (matchedPairs === emojis.length) {
+                setTimeout(() => alert("You Win!"), 300);
+            }
+        }
+    </script>
 
 </body>
 </html>
